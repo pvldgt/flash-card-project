@@ -1,17 +1,23 @@
 BACKGROUND_COLOR = "#B1DDC6"
 
 from tkinter import *
-import pandas as pd
+import pandas
 import random
 
 current_card = {}
 
 # load the csv file as a pandas dataframe
-df = pd.read_csv("data/french_words.csv")
+try:
+    df = pandas.read_csv("data/words_to_learn.csv")
+# if it is the first run of the program, then read the csv from the initial file
+except FileNotFoundError:
+    df = pandas.read_csv("data/french_words.csv")
+
 # turn the data frame into a dictionary
 words_dict = df.to_dict(orient="records")
 
-# function to choose a random French word
+
+# function that chooses a random French word and displays it for 3 seconds
 def show_foreign_word():
     global current_card
     global flip_timer
@@ -29,6 +35,14 @@ def flip_card():
     canvas.itemconfig(language_name, text="English", fill="white")
     translation = current_card["English"]
     canvas.itemconfig(foreign_word, text=translation, fill="white")
+
+
+def right_answer():
+    words_dict.remove(current_card)
+    list_to_df = pandas.DataFrame(words_dict)
+    list_to_df.to_csv("data/words_to_learn.csv", index=False)
+    show_foreign_word()
+
 
 # create the window
 window = Tk()
@@ -51,12 +65,11 @@ language_name = canvas.create_text(400, 150, text="French", fill="black", font=(
 foreign_word = canvas.create_text(400, 263, text="trouve", fill="black", font=("Ariel", 60, "bold"))
 canvas.grid(column=0, row=0, columnspan=2)
 
-
 # create wrong and right buttons
 wrong_image = PhotoImage(file="images/wrong.png")
 right_image = PhotoImage(file="images/right.png")
 wrong_button = Button(image=wrong_image, highlightthickness=0, command=show_foreign_word)
-right_button = Button(image=right_image, highlightthickness=0, command=show_foreign_word)
+right_button = Button(image=right_image, highlightthickness=0, command=right_answer)
 wrong_button.grid(column=0, row=1)
 right_button.grid(column=1, row=1)
 
