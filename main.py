@@ -1,9 +1,8 @@
-BACKGROUND_COLOR = "#B1DDC6"
-
 from tkinter import *
 import pandas
 import random
 
+BACKGROUND_COLOR = "#B1DDC6"
 current_card = {}
 
 # load the csv file as a pandas dataframe
